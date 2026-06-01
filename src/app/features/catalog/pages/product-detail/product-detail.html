@@ -1,0 +1,73 @@
+<ng-container *ngIf="vm$ | async as vm; else loadingOrError">
+  <div style="padding: 20px; max-width: 1000px; margin: 0 auto; display: flex; gap: 30px; flex-wrap: wrap;">
+    
+    <!-- Bagian Kiri: Galeri Gambar -->
+    <div style="flex: 1; min-width: 300px;">
+      <mat-card style="padding: 10px; margin-bottom: 15px;">
+        <img [src]="vm.product.images[selectedImageIndex]" [alt]="vm.product.title" style="width: 100%; height: 400px; object-fit: contain;">
+      </mat-card>
+      <div style="display: flex; gap: 10px; overflow-x: auto;">
+        <img *ngFor="let img of vm.product.images; let i = index" 
+             [src]="img" 
+             (click)="selectImage(i)"
+             style="width: 80px; height: 80px; object-fit: cover; cursor: pointer; border-radius: 4px;"
+             [style.border]="i === selectedImageIndex ? '2px solid #e91e63' : '2px solid transparent'">
+      </div>
+    </div>
+
+    <!-- Bagian Kanan: Info Produk -->
+    <div style="flex: 1; min-width: 300px;">
+      <p style="color: gray; text-transform: uppercase; letter-spacing: 1px;">{{ vm.product.category }}</p>
+      <h1 style="margin: 0 0 15px 0;">{{ vm.product.title }}</h1>
+      
+      <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+        <h2 style="color: #e91e63; margin: 0; font-size: 2em;">${{ vm.product.price }}</h2>
+        <mat-chip style="background-color: #ffc107; color: black;" *ngIf="vm.product.discountPercentage > 0">
+          -{{ vm.product.discountPercentage }}%
+        </mat-chip>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 20px;">
+        <mat-icon color="accent">star</mat-icon>
+        <span>{{ vm.product.rating }} / 5</span>
+        <span style="color: gray; margin-left: 10px;">• Stok: {{ vm.product.stock }} unit</span>
+      </div>
+
+      <p style="line-height: 1.6; margin-bottom: 30px;">{{ vm.product.description }}</p>
+
+      <div style="display: flex; gap: 15px;">
+        <button mat-raised-button color="primary" (click)="addToCart(vm.product)" style="padding: 25px 30px; font-size: 1.1em;">
+          <mat-icon>shopping_cart</mat-icon> Tambah ke Keranjang
+        </button>
+        <button mat-stroked-button (click)="goBack()" style="padding: 25px 30px; font-size: 1.1em;">Kembali</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bagian Bawah: Produk Terkait -->
+  <div style="padding: 20px; max-width: 1000px; margin: 40px auto 0;" *ngIf="vm.related.length > 0">
+    <h3 style="margin-bottom: 20px;">Produk Terkait</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+      <mat-card *ngFor="let p of vm.related" style="cursor: pointer;" [routerLink]="['/catalog', p.id]">
+        <img mat-card-image [src]="p.thumbnail" style="height: 150px; object-fit: contain; padding: 10px; background: #f5f5f5;">
+        <mat-card-content style="padding: 15px;">
+          <h4 style="margin: 0 0 5px;">{{ p.title }}</h4>
+          <p style="color: #e91e63; font-weight: bold; margin: 0;">${{ p.price }}</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #loadingOrError>
+  <div *ngIf="isLoading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 50vh;">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p style="margin-top: 20px; color: gray;">Memuat detail produk...</p>
+  </div>
+  
+  <div *ngIf="errorMsg" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 50vh; color: #f44336;">
+    <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 15px;">error_outline</mat-icon>
+    <p>{{ errorMsg }}</p>
+    <button mat-button color="primary" (click)="goBack()" style="margin-top: 15px;">Kembali ke Katalog</button>
+  </div>
+</ng-template>

@@ -1,0 +1,116 @@
+import { Component, OnInit, inject, DestroyRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, map, startWith, catchError } from 'rxjs/operators';
+import { ProductService } from '../../services/product';
+import { Product, ProductFilter } from '../../../../core/models/product-model';
+
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field'; // <-- Modul ini ditambahkan
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatChipsModule } from '@angular/material/chips';
+
+@Component({
+  selector: 'app-catalog-list',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule, // <-- Wajib didaftarkan di sini
+    MatCardModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatPaginatorModule,
+    MatChipsModule
+  ],
+  templateUrl: './catalog-list.html',
+  styleUrls: ['./catalog-list.scss']
+})
+export class CatalogListComponent implements OnInit {
+  private productSvc = inject(ProductService);
+  private destroyRef = inject(DestroyRef);
+
+  searchControl = new FormControl('');
+  categoryControl = new FormControl('');
+  
+  // Tipe data diubah jadi any[] agar Angular tidak protes saat kita memanggil cat.slug di HTML
+  categories$: Observable<any[]> = this.productSvc.categories$;
+  products$!: Observable<Product[]>;
+  
+  totalItems = 0;
+  pageSize = 12;
+  currentPage = 0;
+  isLoading = false;
+
+  private filterSubject = new BehaviorSubject<ProductFilter>({
+    limit: 12,
+    page: 0
+  });
+
+  ngOnInit() {
+    this.setupFilters();
+    this.setupDataStream();
+  }
+
+  setupFilters() {
+    combineLatest([
+      this.searchControl.valueChanges.pipe(
+        startWith(''),
+        debounceTime(500),
+        distinctUntilChanged()
+      ),
+      this.categoryControl.valueChanges.pipe(startWith(''))
+    ]).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(([search, category]) => {
+      this.currentPage = 0;
+      this.filterSubject.next({
+        ...this.filterSubject.value,
+        search: search || undefined,
+        category: category || undefined,
+        page: 0
+      });
+    });
+  }
+
+  setupDataStream() {
+    this.products$ = this.filterSubject.pipe(
+      switchMap(filter => {
+        this.isLoading = true;
+        return this.productSvc.getProducts(filter).pipe(
+          catchError(() => {
+            this.isLoading = false;
+            return []; 
+          })
+        );
+      }),
+      map(res => {
+        this.isLoading = false;
+        if (Array.isArray(res)) return []; 
+        
+        this.totalItems = res.total || 0;
+        return res['products'] || [''];
+      })
+    );
+  }
+
+  onPageChange(event: PageEvent) {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.filterSubject.next({
+      ...this.filterSubject.value,
+      page: this.currentPage,
+      limit: this.pageSize
+    });
+  }
+}
