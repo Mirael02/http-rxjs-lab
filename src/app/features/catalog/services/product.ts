@@ -1,10 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { ApiClientService } from '../../../core/services/api-client';
 import { Product, ProductFilter, CreateProductDto, UpdateProductDto } from '../../../core/models/product-model';
-import { PagedResponse } from '../../../core/models/api-response-model';
+import { PagedResponse, UploadProgress } from '../../../core/models/api-response-model';
 import { Observable } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
 import { HttpParams } from '@angular/common/http';
+
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
@@ -61,5 +62,14 @@ export class ProductService {
   // Hapus produk
   deleteProduct(id: number): Observable<Product> {
     return this.api.delete<Product>(`/products/${id}`);
+  }
+
+  // Upload gambar produk dengan progress
+  uploadImage(file: File): Observable<UploadProgress> {
+    const formData = new FormData();
+    formData.append('image', file, file.name);
+    // dummyjson tidak punya endpoint upload nyata,
+    // simulasikan dengan POST ke /products/add
+    return this.api.upload<any>('/products/add', file);
   }
 }

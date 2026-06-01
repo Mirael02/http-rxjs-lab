@@ -1,0 +1,31 @@
+<div style="border: 2px dashed #ccc; padding: 20px; text-align: center; border-radius: 8px; margin-bottom: 15px;"
+     (dragover)="$event.preventDefault()" 
+     (drop)="onDrop($event)">
+  
+  <mat-icon style="font-size: 40px; width: 40px; height: 40px; color: gray;">cloud_upload</mat-icon>
+  <p>Drag & drop gambar atau 
+    <label style="color: #e91e63; cursor: pointer; text-decoration: underline;">
+      pilih file
+      <input type="file" (change)="onFileSelected($event)" accept="image/*" hidden>
+    </label>
+  </p>
+
+  <div *ngIf="uploadState" style="margin-top: 15px;">
+    <mat-progress-bar 
+      [mode]="uploadState.type === 'progress' ? 'determinate' : 'indeterminate'" 
+      [value]="uploadState.percent || 0">
+    </mat-progress-bar>
+    
+    <span style="display: block; margin-top: 10px; font-size: 0.9em; color: gray;">
+      <ng-container *ngIf="uploadState.type === 'progress'">
+        Mengunggah... {{ uploadState.percent }}%
+      </ng-container>
+      <ng-container *ngIf="uploadState.type === 'complete'">
+        Upload selesai!
+      </ng-container>
+      <ng-container *ngIf="uploadState.type === 'error'">
+        Error: {{ uploadState.error }}
+      </ng-container>
+    </span>
+  </div>
+</div>

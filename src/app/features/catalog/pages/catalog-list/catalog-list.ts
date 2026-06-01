@@ -82,19 +82,21 @@ export class CatalogListComponent implements OnInit {
     });
   }
 
-  setupDataStream() {
+setupDataStream() {
     const loadingSubject = new BehaviorSubject<boolean>(false);
     this.isLoading$ = loadingSubject.asObservable();
 
     this.products$ = this.filterSubject.pipe(
-      tap(() => loadingSubject.next(true)),
+      // Gunakan setTimeout supaya update nilainya ditunda ke siklus berikutnya
+      tap(() => setTimeout(() => loadingSubject.next(true))),
       switchMap(filter => {
         return this.productSvc.getProducts(filter).pipe(
           catchError(() => of({ products: [], total: 0 }))
         );
       }),
       tap(() => {
-        loadingSubject.next(false);
+        // Matikan loading dengan setTimeout juga
+        setTimeout(() => loadingSubject.next(false));
       }),
       map(res => {
         if (!res || Array.isArray(res)) return []; 
@@ -112,6 +114,22 @@ export class CatalogListComponent implements OnInit {
       ...this.filterSubject.value,
       page: this.currentPage,
       limit: this.pageSize
+    });
+  }
+
+  onDelete(product: Product) {
+    const isConfirm = confirm(`Hapus produk '${product.title}'?`);
+    if (!isConfirm) return;
+
+    this.productSvc.deleteProduct(product.id).subscribe({
+      next: () => {
+        alert(`${product.title} berhasil dihapus.`);
+        // Refresh list dengan men-trigger ulang filter subject
+        this.filterSubject.next(this.filterSubject.value);
+      },
+      error: (err) => {
+        alert('Gagal menghapus: ' + err.message);
+      }
     });
   }
 }

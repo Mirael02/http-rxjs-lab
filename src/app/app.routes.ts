@@ -6,7 +6,14 @@ export const routes: Routes = [
     loadComponent: () => import('./features/catalog/pages/catalog-list/catalog-list').then(c => c.CatalogListComponent)
   },
   {
-    // Rute dinamis dengan parameter :id
+    path: 'catalog/create',
+    loadComponent: () => import('./features/catalog/pages/product-form/product-form').then(c => c.ProductFormComponent)
+  },
+  {
+    path: 'catalog/:id/edit',
+    loadComponent: () => import('./features/catalog/pages/product-form/product-form').then(c => c.ProductFormComponent)
+  },
+  {
     path: 'catalog/:id',
     loadComponent: () => import('./features/catalog/pages/product-detail/product-detail').then(c => c.ProductDetailComponent)
   },
