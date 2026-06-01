@@ -87,13 +87,10 @@ export class CatalogListComponent implements OnInit {
     this.isLoading$ = loadingSubject.asObservable();
 
     this.products$ = this.filterSubject.pipe(
+      tap(() => loadingSubject.next(true)),
       switchMap(filter => {
-        loadingSubject.next(true);
         return this.productSvc.getProducts(filter).pipe(
-          catchError(() => {
-            loadingSubject.next(false);
-            return of({ products: [], total: 0 }); 
-          })
+          catchError(() => of({ products: [], total: 0 }))
         );
       }),
       tap(() => {
