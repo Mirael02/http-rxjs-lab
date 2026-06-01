@@ -2,13 +2,13 @@ import { Component, OnInit, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap, map, startWith, catchError } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, map, startWith, catchError, tap } from 'rxjs/operators';
 import { ProductService } from '../../services/product';
 import { Product, ProductFilter } from '../../../../core/models/product-model';
 
 import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field'; // <-- Modul ini ditambahkan
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,7 +23,7 @@ import { MatChipsModule } from '@angular/material/chips';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatFormFieldModule, // <-- Wajib didaftarkan di sini
+    MatFormFieldModule,
     MatCardModule,
     MatInputModule,
     MatSelectModule,
@@ -43,14 +43,13 @@ export class CatalogListComponent implements OnInit {
   searchControl = new FormControl('');
   categoryControl = new FormControl('');
   
-  // Tipe data diubah jadi any[] agar Angular tidak protes saat kita memanggil cat.slug di HTML
   categories$: Observable<any[]> = this.productSvc.categories$;
   products$!: Observable<Product[]>;
+  isLoading$!: Observable<boolean>;
   
   totalItems = 0;
   pageSize = 12;
   currentPage = 0;
-  isLoading = false;
 
   private filterSubject = new BehaviorSubject<ProductFilter>({
     limit: 12,
@@ -84,22 +83,27 @@ export class CatalogListComponent implements OnInit {
   }
 
   setupDataStream() {
+    const loadingSubject = new BehaviorSubject<boolean>(false);
+    this.isLoading$ = loadingSubject.asObservable();
+
     this.products$ = this.filterSubject.pipe(
       switchMap(filter => {
-        this.isLoading = true;
+        loadingSubject.next(true);
         return this.productSvc.getProducts(filter).pipe(
           catchError(() => {
-            this.isLoading = false;
-            return []; 
+            loadingSubject.next(false);
+            return of({ products: [], total: 0 }); 
           })
         );
       }),
+      tap(() => {
+        loadingSubject.next(false);
+      }),
       map(res => {
-        this.isLoading = false;
-        if (Array.isArray(res)) return []; 
+        if (!res || Array.isArray(res)) return []; 
         
         this.totalItems = res.total || 0;
-        return res['products'] || [''];
+        return res['products'] || [];
       })
     );
   }
