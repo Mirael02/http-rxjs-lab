@@ -1,0 +1,29 @@
+<mat-card style="padding: 20px; height: 100%; box-sizing: border-box;">
+  <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 10px;">
+    <h3 style="margin: 0; display: flex; align-items: center; gap: 8px;">
+      <mat-icon color="warn">inventory_2</mat-icon> Monitor Stok Kritis
+    </h3>
+    <span *ngIf="lastUpdated" style="font-size: 12px; color: gray;">
+      Update: {{ lastUpdated | date: 'HH:mm:ss' }}
+    </span>
+  </div>
+
+  <div *ngIf="isFirstLoad" style="padding: 20px; text-align: center; color: gray;">
+    Memuat data stok...
+  </div>
+
+  <mat-list *ngIf="!isFirstLoad">
+    <mat-list-item *ngFor="let product of lowStockProducts" [routerLink]="['/catalog', product.id]" style="cursor: pointer; margin-bottom: 10px;">
+      <img matListItemAvatar [src]="product.thumbnail" style="background: #f5f5f5;">
+      <span matListItemTitle>{{ product.title }}</span>
+      <span matListItemLine style="color: gray;">{{ product.brand }}</span>
+      <mat-chip matListItemMeta [style.background]="product.stock === 0 ? '#f44336' : '#ff9800'" style="color: white;">
+        Stok: {{ product.stock }}
+      </mat-chip>
+    </mat-list-item>
+
+    <p *ngIf="lowStockProducts.length === 0" style="text-align: center; color: green; padding: 20px;">
+      <mat-icon style="vertical-align: middle;">check_circle</mat-icon> Semua stok produk aman!
+    </p>
+  </mat-list>
+</mat-card>

@@ -1,9 +1,10 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { LoadingBarComponent } from './shared/components/loading-bar/loading-bar';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, LoadingBarComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

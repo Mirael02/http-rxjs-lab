@@ -16,9 +16,14 @@ export class ApiClientService {
   private baseUrl = environment.apiBaseUrl;
 
   private cleanParams(params?: RequestOptions['params']): HttpParams {
-    let httpParams = new HttpParams();
-    if (!params) return httpParams;
+    if (!params) return new HttpParams();
 
+    // Tambahkan baris ini: kalau sudah berbentuk HttpParams, langsung kembalikan
+    if (params instanceof HttpParams) {
+      return params;
+    }
+
+    let httpParams = new HttpParams();
     Object.keys(params).forEach(key => {
       const value = (params as any)[key];
       if (value !== null && value !== undefined && value !== '') {
