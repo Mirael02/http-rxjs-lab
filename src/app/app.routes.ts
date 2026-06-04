@@ -21,5 +21,9 @@ export const routes: Routes = [
     path: 'catalog/:id',
     loadComponent: () => import('./features/catalog/pages/product-detail/product-detail').then(c => c.ProductDetailComponent)
   },
+  {
+    path: 'news',
+    loadComponent: () => import('./features/news/pages/news-dashboard/news-dashboard').then(c => c.NewsDashboardComponent)
+  },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
 ];

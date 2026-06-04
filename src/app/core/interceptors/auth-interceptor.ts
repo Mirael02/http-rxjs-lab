@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { AuthService } from '../services/auth-service';
+import { environment } from '../../../environments/environment';
 
 // URL yang tidak memerlukan token
 const PUBLIC_URLS = ['/auth/login', '/auth/register', '/products', '/users'];
@@ -10,6 +11,14 @@ const PUBLIC_URLS = ['/auth/login', '/auth/register', '/products', '/users'];
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
 
+  // Menyisipkan API key GNEWS
+  if (req.url.includes('gnews.io')) {
+    const newsReq = req.clone({
+      setParams: { apikey: environment.newsApiKey }
+    });
+    return next(newsReq);
+  }
+  
   // Skip jika URL publik
   const isPublic = PUBLIC_URLS.some(url => req.url.includes(url));
   if (isPublic && req.method === 'GET') return next(req);
