@@ -5,5 +5,5 @@ export const environment = {
   enableLogging: true,
   pollInterval: 30000,
   newsApiUrl: 'https://gnews.io/api/v4',
-  newsApiKey: '648ab6b1c4830c76b931cef38337829f' // Ganti dengan key dari gnews.io
+  newsApiKey: process.env['NEWS_API_KEY'] || '648ab6b1c4830c76b931cef38337829f'
 };
