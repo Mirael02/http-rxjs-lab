@@ -1,0 +1,130 @@
+.news-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.news-title {
+  margin: 0 0 24px;
+  font: var(--mat-sys-headline-medium);
+  color: var(--mat-sys-on-surface);
+}
+
+.breaking-news-card {
+  margin-bottom: 24px;
+  border-radius: 12px;
+  border-left: 4px solid var(--mat-sys-error);
+}
+
+.breaking-news-item {
+  margin-bottom: 4px;
+}
+
+.breaking-news-source {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.8em;
+}
+
+.news-empty {
+  color: var(--mat-sys-on-surface-variant);
+  padding: 8px 0;
+  margin: 0;
+}
+
+.news-filters {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.news-search {
+  flex: 2;
+}
+
+.news-category-filter {
+  flex: 1;
+}
+
+.news-search-results {
+  margin-bottom: 30px;
+
+  h3 {
+    font: var(--mat-sys-title-medium);
+    color: var(--mat-sys-on-surface);
+    margin: 20px 0 16px;
+  }
+}
+
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.news-article-card {
+  border-radius: 12px;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.news-article-img {
+  height: 150px;
+  object-fit: cover;
+  border-radius: 12px 12px 0 0;
+}
+
+.news-article-content {
+  padding: 16px;
+
+  h4 {
+    margin: 0 0 8px;
+    font: var(--mat-sys-title-small);
+    color: var(--mat-sys-on-surface);
+  }
+
+  p {
+    font: var(--mat-sys-body-small);
+    color: var(--mat-sys-on-surface-variant);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin: 0;
+  }
+}
+
+.news-category-section {
+  margin-bottom: 32px;
+}
+
+.news-category-title {
+  font: var(--mat-sys-title-large);
+  color: var(--mat-sys-on-surface);
+  text-transform: capitalize;
+  margin: 0 0 16px;
+}
+
+.comment-card {
+  margin-top: 24px;
+  border-radius: 12px;
+}
+
+.comment-form {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.comment-input {
+  flex: 1;
+}
+
+.news-empty {
+  color: var(--mat-sys-on-surface-variant);
+  padding: 8px 0;
+  margin: 0;
+}

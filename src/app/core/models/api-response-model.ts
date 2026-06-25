@@ -1,5 +1,5 @@
 export interface PagedResponse<T> {
-  [key: string]: any;
+  products?: T[];
   total: number;
   skip: number;
   limit: number;

@@ -14,7 +14,8 @@ import { MatChipsModule } from '@angular/material/chips';
   selector: 'app-stock-monitor',
   standalone: true,
   imports: [CommonModule, RouterModule, MatCardModule, MatListModule, MatIconModule, MatChipsModule],
-  templateUrl: './stock-monitor.html'
+  templateUrl: './stock-monitor.html',
+  styleUrl: './stock-monitor.scss'
 })
 export class StockMonitorComponent implements OnInit, OnDestroy {
   private dashSvc = inject(DashboardService);

@@ -9,6 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-product-form',
@@ -19,9 +20,11 @@ import { MatCardModule } from '@angular/material/card';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatCardModule
+    MatCardModule,
+    MatIconModule
   ],
-  templateUrl: './product-form.html'
+  templateUrl: './product-form.html',
+  styleUrl: './product-form.scss'
 })
 export class ProductFormComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -37,7 +40,6 @@ export class ProductFormComponent implements OnInit {
   ngOnInit() {
     this.buildForm();
     
-    // Cek apakah ada parameter id di URL (mode edit)
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEditMode = true;

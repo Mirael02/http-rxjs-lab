@@ -9,7 +9,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
   selector: 'app-upload-progress',
   standalone: true,
   imports: [CommonModule, MatIconModule, MatProgressBarModule],
-  templateUrl: './upload-progress.html'
+  templateUrl: './upload-progress.html',
+  styleUrl: './upload-progress.scss'
 })
 export class UploadProgressComponent {
   private productSvc = inject(ProductService);

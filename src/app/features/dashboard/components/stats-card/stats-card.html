@@ -1,1 +1,7 @@
-<p>stats-card works!</p>
+<mat-card class="stats-card">
+  <mat-icon class="stats-icon" [color]="color">{{ icon }}</mat-icon>
+  <div class="stats-info">
+    <p class="stats-label">{{ label }}</p>
+    <h2 class="stats-value">{{ value }}</h2>
+  </div>
+</mat-card>

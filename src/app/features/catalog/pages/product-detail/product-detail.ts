@@ -24,7 +24,8 @@ import { MatChipsModule } from '@angular/material/chips';
     MatProgressSpinnerModule,
     MatChipsModule
   ],
-  templateUrl: './product-detail.html'
+  templateUrl: './product-detail.html',
+  styleUrl: './product-detail.scss'
 })
 export class ProductDetailComponent {
   private route = inject(ActivatedRoute);
@@ -35,7 +36,6 @@ export class ProductDetailComponent {
   errorMsg: string | null = null;
   selectedImageIndex = 0;
 
-  // Reaktif terhadap perubahan URL parameter (ID produk)
   vm$ = this.route.paramMap.pipe(
     map(params => Number(params.get('id'))),
     distinctUntilChanged(),
@@ -46,14 +46,12 @@ export class ProductDetailComponent {
     }),
     switchMap(id => this.productSvc.getProduct(id).pipe(
       switchMap(product => {
-        // Dependent Request: Setelah dapat produk utama, ambil produk terkait
         return this.productSvc.getProducts({ category: product.category, limit: 5 }).pipe(
           map(res => {
-            // Filter agar produk yang sedang dilihat tidak muncul di daftar terkait
-            const related = (res['products'] || []).filter((p: Product) => p.id !== id).slice(0, 4);
+            const related = (res.products || []).filter((p: Product) => p.id !== id).slice(0, 4);
             return { product, related };
           }),
-          catchError(() => of({ product, related: [] })) // Fallback kalau gagal
+          catchError(() => of({ product, related: [] }))
         );
       }),
       tap(() => this.isLoading = false),

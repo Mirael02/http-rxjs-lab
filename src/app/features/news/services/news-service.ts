@@ -11,6 +11,7 @@ export class NewsService {
   private baseUrl = environment.newsApiUrl;
 
   private sources$?: Observable<string[]>;
+  private homeCategories$?: Observable<any>;
 
   getSources(): Observable<string[]> {
     if (!this.sources$) {
@@ -37,16 +38,22 @@ export class NewsService {
   }
 
   getHomeCategories(): Observable<any> {
-    const getCat = (cat: string) => this.http.get<any>(`${this.baseUrl}/search?q=${cat}&max=4`).pipe(
-      map(res => res.articles || []),
-      catchError(() => of([]))
-    );
+    if (!this.homeCategories$) {
+      const getCat = (cat: string) => this.http.get<any>(`${this.baseUrl}/search?q=${cat}&max=4`).pipe(
+        map(res => res.articles || []),
+        catchError(() => of([]))
+      );
 
-    return forkJoin({
-      teknologi: getCat('teknologi'),
-      bisnis: getCat('bisnis'),
-      olahraga: getCat('olahraga')
-    });
+      this.homeCategories$ = forkJoin({
+        teknologi: getCat('teknologi'),
+        bisnis: getCat('bisnis'),
+        olahraga: getCat('olahraga')
+      }).pipe(
+        shareReplay(1),
+        catchError(() => of({ teknologi: [], bisnis: [], olahraga: [] }))
+      );
+    }
+    return this.homeCategories$;
   }
 
   pollBreakingNews(destroy$: Observable<void>): Observable<any[]> {

@@ -11,6 +11,7 @@ import { StockMonitorComponent } from '../../components/stock-monitor/stock-moni
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,9 +23,11 @@ import { MatButtonModule } from '@angular/material/button';
     StockMonitorComponent,
     MatCardModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    MatProgressSpinnerModule
   ],
-  templateUrl: './dashboard.html'
+  templateUrl: './dashboard.html',
+  styleUrl: './dashboard.scss'
 })
 export class DashboardComponent implements OnInit {
   private dashSvc = inject(DashboardService);

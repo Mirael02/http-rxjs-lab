@@ -32,8 +32,8 @@ export class DashboardService {
         totalProducts: allProducts.total,
         totalUsers: users.total,
         totalCarts: carts.total,
-        lowStockItems: (allProducts['products'] || []).filter((p: Product) => p.stock < 10),
-        topRatedItems: topRated['products'] || [],
+        lowStockItems: (allProducts.products || []).filter((p: Product) => p.stock < 10),
+        topRatedItems: topRated.products || [],
         categoryCount: Array.isArray(categories) ? categories.length : 0
       }))
     );
@@ -54,7 +54,7 @@ export class DashboardService {
   // Produk per kategori untuk dropdown reaktif
   getProductsByCategory(category: string): Observable<Product[]> {
     return this.api.getPaged<any>(`/products/category/${category}`, { params: { limit: 8 } }).pipe(
-      map(r => r['products'] || []),
+      map(r => r.products || []),
       catchError(() => of([]))
     );
   }
@@ -67,7 +67,7 @@ export class DashboardService {
           params: { limit: 20, sortBy: 'stock', order: 'asc' },
           headers: skipLoading().headers // Menggunakan helper skipLoading agar loading bar tidak muncul
         }).pipe(
-          map(r => (r['products'] || []).filter((p: Product) => p.stock < 10)),
+          map(r => (r.products || []).filter((p: Product) => p.stock < 10)),
           catchError(() => of([]))
         )
       ),

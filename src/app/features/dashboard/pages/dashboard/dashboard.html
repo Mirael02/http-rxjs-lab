@@ -1,28 +1,31 @@
-<div style="padding: 20px; max-width: 1200px; margin: 0 auto;">
-  <h1 style="margin-bottom: 25px; color: #333;">Dashboard</h1>
+<div class="dashboard-container">
+  <h1 class="dashboard-title">Dashboard</h1>
 
-  <div *ngIf="isLoading" style="padding: 40px; text-align: center; color: gray;">
+  <div *ngIf="isLoading" class="loading-state">
+    <mat-spinner diameter="40"></mat-spinner>
     <p>Memuat data widget...</p>
   </div>
 
-  <mat-card *ngIf="error" style="background-color: #ffebee; padding: 20px; margin-bottom: 20px;">
-    <mat-icon color="warn" style="vertical-align: middle; margin-right: 10px;">error_outline</mat-icon>
-    <span style="color: #c62828;">{{ error }}</span>
-    <button mat-button color="warn" (click)="ngOnInit()" style="margin-left: 15px;">Coba Lagi</button>
+  <mat-card *ngIf="error" class="error-card">
+    <mat-card-content>
+      <mat-icon color="warn">error_outline</mat-icon>
+      <span>{{ error }}</span>
+      <button mat-button color="warn" (click)="ngOnInit()">Coba Lagi</button>
+    </mat-card-content>
   </mat-card>
 
-  <div *ngIf="stats && !isLoading" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px;">
+  <div *ngIf="stats && !isLoading" class="stats-grid">
     <app-stats-card icon="inventory_2" label="Total Produk" [value]="stats.totalProducts" color="primary"></app-stats-card>
     <app-stats-card icon="people" label="Total Users" [value]="stats.totalUsers" color="accent"></app-stats-card>
     <app-stats-card icon="shopping_cart" label="Total Cart" [value]="stats.totalCarts" color="warn"></app-stats-card>
     <app-stats-card icon="category" label="Kategori" [value]="stats.categoryCount" color="primary"></app-stats-card>
   </div>
 
-  <div *ngIf="stats && !isLoading" style="display: flex; gap: 20px; flex-wrap: wrap; align-items: stretch;">
-    <div style="flex: 2; min-width: 350px;">
+  <div *ngIf="stats && !isLoading" class="dashboard-panels">
+    <div class="panel-main">
       <app-category-browser></app-category-browser>
     </div>
-    <div style="flex: 1; min-width: 300px;">
+    <div class="panel-side">
       <app-stock-monitor></app-stock-monitor>
     </div>
   </div>

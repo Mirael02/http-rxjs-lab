@@ -22,7 +22,8 @@ import { MatChipsModule } from '@angular/material/chips';
     MatCardModule, MatFormFieldModule, MatSelectModule, 
     MatProgressBarModule, MatChipsModule
   ],
-  templateUrl: './category-browser.html'
+  templateUrl: './category-browser.html',
+  styleUrl: './category-browser.scss'
 })
 export class CategoryBrowserComponent implements OnInit {
   private dashSvc = inject(DashboardService);

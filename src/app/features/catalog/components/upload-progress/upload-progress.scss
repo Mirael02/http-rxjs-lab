@@ -1,0 +1,40 @@
+.upload-zone {
+  border: 2px dashed var(--mat-sys-outline);
+  padding: 24px;
+  text-align: center;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  transition: border-color 0.2s, background 0.2s;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--mat-sys-primary);
+    background: color-mix(in srgb, var(--mat-sys-primary) 5%, transparent);
+  }
+}
+
+.upload-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  color: var(--mat-sys-on-surface-variant);
+  margin-bottom: 8px;
+}
+
+.upload-link {
+  color: var(--mat-sys-primary);
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.upload-status {
+  margin-top: 16px;
+}
+
+.upload-status-text {
+  display: block;
+  margin-top: 10px;
+  font-size: 0.9em;
+  color: var(--mat-sys-on-surface-variant);
+}

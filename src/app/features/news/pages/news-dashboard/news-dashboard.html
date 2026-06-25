@@ -1,25 +1,30 @@
-<div style="padding: 20px; max-width: 1200px; margin: auto;">
-  <h2>News Aggregator</h2>
+<div class="news-container">
+  <h2 class="news-title">News Aggregator</h2>
 
-  <mat-card style="margin-bottom: 20px; background-color: #ffebee;">
-    <mat-card-title style="color: #c62828;"><mat-icon>campaign</mat-icon> Breaking News (Auto-update 60s)</mat-card-title>
+  <mat-card class="breaking-news-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar color="warn">campaign</mat-icon>
+      <mat-card-title>Breaking News (Auto-update 60s)</mat-card-title>
+    </mat-card-header>
     <mat-card-content>
-      <ul>
-        <li *ngFor="let news of breakingNews">
-          <a [href]="news.url" target="_blank">{{ news.title }}</a> 
-          <span style="color: gray; font-size: 0.8em;"> - {{ news.source.name }}</span>
-        </li>
-      </ul>
+      <mat-list dense>
+        <mat-list-item *ngFor="let news of breakingNews" class="breaking-news-item">
+          <a mat-line [href]="news.url" target="_blank">{{ news.title }}</a>
+          <span mat-line class="breaking-news-source">{{ news.source.name }}</span>
+        </mat-list-item>
+        <p *ngIf="breakingNews.length === 0" class="news-empty">Memuat berita terbaru...</p>
+      </mat-list>
     </mat-card-content>
   </mat-card>
 
-  <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-    <mat-form-field appearance="outline" style="flex: 2;">
+  <div class="news-filters">
+    <mat-form-field appearance="outline" class="news-search">
       <mat-label>Cari Berita</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
       <input matInput [formControl]="searchControl">
     </mat-form-field>
     
-    <mat-form-field appearance="outline" style="flex: 1;">
+    <mat-form-field appearance="outline" class="news-category-filter">
       <mat-label>Kategori Pencarian</mat-label>
       <mat-select [formControl]="categoryControl">
         <mat-option value="">Semua</mat-option>
@@ -32,14 +37,14 @@
 
   <mat-progress-bar *ngIf="isLoadingSearch" mode="indeterminate"></mat-progress-bar>
 
-  <div *ngIf="searchControl.value || categoryControl.value" style="margin-bottom: 30px;">
+  <div *ngIf="searchControl.value || categoryControl.value" class="news-search-results">
     <h3>Hasil Pencarian</h3>
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;">
-      <mat-card *ngFor="let article of filteredArticles">
-        <img mat-card-image [src]="article.image" alt="image" style="height: 150px; object-fit: cover;">
-        <mat-card-content>
+    <div class="news-grid">
+      <mat-card *ngFor="let article of filteredArticles" class="news-article-card">
+        <img mat-card-image [src]="article.image" alt="image" class="news-article-img">
+        <mat-card-content class="news-article-content">
           <h4>{{ article.title }}</h4>
-          <p style="font-size: 0.9em; color: gray;">{{ article.description }}</p>
+          <p>{{ article.description }}</p>
         </mat-card-content>
         <mat-card-actions>
           <a mat-button color="primary" [href]="article.url" target="_blank">Baca Lengkap</a>
@@ -49,11 +54,11 @@
   </div>
 
   <div *ngIf="!searchControl.value && !categoryControl.value && homeCategories">
-    <div *ngFor="let cat of ['teknologi', 'bisnis', 'olahraga']" style="margin-bottom: 30px;">
-      <h3 style="text-transform: capitalize;">{{ cat }}</h3>
-      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px;">
-        <mat-card *ngFor="let article of homeCategories[cat]">
-          <mat-card-content>
+    <div *ngFor="let cat of ['teknologi', 'bisnis', 'olahraga']" class="news-category-section">
+      <h3 class="news-category-title">{{ cat }}</h3>
+      <div class="news-grid">
+        <mat-card *ngFor="let article of homeCategories[cat]" class="news-article-card">
+          <mat-card-content class="news-article-content">
             <p><strong>{{ article.title }}</strong></p>
           </mat-card-content>
           <mat-card-actions>
@@ -64,14 +69,19 @@
     </div>
   </div>
 
-  <mat-card style="margin-top: 20px;">
-    <mat-card-title>Tinggalkan Komentar Cepat</mat-card-title>
-    <mat-card-content style="display: flex; gap: 10px; margin-top: 10px;">
-      <mat-form-field appearance="outline" style="flex: 1;">
-        <mat-label>Komentar</mat-label>
-        <input matInput [formControl]="commentControl">
-      </mat-form-field>
-      <button mat-raised-button color="primary" style="height: 56px;" (click)="submitComment()">Kirim</button>
+  <mat-card class="comment-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>comment</mat-icon>
+      <mat-card-title>Tinggalkan Komentar Cepat</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="comment-form">
+        <mat-form-field appearance="outline" class="comment-input">
+          <mat-label>Komentar</mat-label>
+          <input matInput [formControl]="commentControl">
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="submitComment()">Kirim</button>
+      </div>
     </mat-card-content>
   </mat-card>
 </div>

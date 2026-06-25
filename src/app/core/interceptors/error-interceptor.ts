@@ -1,16 +1,17 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { throwError, timer } from 'rxjs';
+import { throwError, timer, EMPTY } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const snackBar = inject(MatSnackBar);
+  const platformId = inject(PLATFORM_ID);
 
   return next(req).pipe(
-    // Auto-retry untuk error jaringan atau server sibuk
     retry({
       count: 2,
       delay: (error: HttpErrorResponse, count) => {
@@ -22,7 +23,11 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     }),
     catchError((err: HttpErrorResponse) => {
       const message = extractErrorMessage(err);
-      
+
+      if (!isPlatformBrowser(platformId)) {
+        return throwError(() => new Error(message));
+      }
+
       switch (err.status) {
         case 0:
           snackBar.open('Tidak ada koneksi internet. Periksa jaringan Anda.', 'Coba Lagi', { duration: 4000 });
@@ -39,8 +44,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           snackBar.open(`Data tidak valid: ${message}`, 'Tutup', { duration: 5000 });
           break;
         case 429:
+          console.warn(`Rate limited (429) pada ${req.url}.`);
           snackBar.open('Terlalu banyak permintaan. Tunggu sebentar.', 'OK', { duration: 5000 });
-          break;
+          return EMPTY;
         case 500:
         case 502:
         case 503:

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap, map, startWith, catchError, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, map, startWith, catchError, shareReplay } from 'rxjs/operators';
 import { ProductService } from '../../services/product';
 import { Product, ProductFilter } from '../../../../core/models/product-model';
 
@@ -16,6 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatChipsModule } from '@angular/material/chips';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-catalog-list',
@@ -31,7 +32,8 @@ import { MatChipsModule } from '@angular/material/chips';
     MatIconModule,
     MatProgressSpinnerModule,
     MatPaginatorModule,
-    MatChipsModule
+    MatChipsModule,
+    RouterModule
   ],
   templateUrl: './catalog-list.html',
   styleUrls: ['./catalog-list.scss']
@@ -82,28 +84,24 @@ export class CatalogListComponent implements OnInit {
     });
   }
 
-setupDataStream() {
+  setupDataStream() {
     const loadingSubject = new BehaviorSubject<boolean>(false);
-    this.isLoading$ = loadingSubject.asObservable();
+    this.isLoading$ = loadingSubject.asObservable().pipe(distinctUntilChanged());
 
     this.products$ = this.filterSubject.pipe(
-      // Gunakan setTimeout supaya update nilainya ditunda ke siklus berikutnya
-      tap(() => setTimeout(() => loadingSubject.next(true))),
       switchMap(filter => {
+        loadingSubject.next(true);
         return this.productSvc.getProducts(filter).pipe(
           catchError(() => of({ products: [], total: 0 }))
         );
       }),
-      tap(() => {
-        // Matikan loading dengan setTimeout juga
-        setTimeout(() => loadingSubject.next(false));
-      }),
       map(res => {
         if (!res || Array.isArray(res)) return []; 
-        
         this.totalItems = res.total || 0;
-        return res['products'] || [];
-      })
+        loadingSubject.next(false);
+        return res.products || [];
+      }),
+      shareReplay(1)
     );
   }
 
